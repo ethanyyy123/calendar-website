@@ -46,6 +46,17 @@ export function useTasks() {
     [setTasks],
   )
 
+  const logTime = useCallback(
+    (id: string, minutes: number) => {
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === id ? { ...t, loggedMinutes: (t.loggedMinutes ?? 0) + minutes } : t,
+        ),
+      )
+    },
+    [setTasks],
+  )
+
   // Reminder polling: checks every 20s whether any task's reminder time has arrived.
   useEffect(() => {
     if (!('Notification' in window)) return
@@ -77,5 +88,5 @@ export function useTasks() {
     return () => clearInterval(interval)
   }, [tasks])
 
-  return { tasks, addTask, updateTask, deleteTask, toggleComplete }
+  return { tasks, addTask, updateTask, deleteTask, toggleComplete, logTime }
 }

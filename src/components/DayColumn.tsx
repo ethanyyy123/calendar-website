@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Task } from '../types'
-import { formatDayHeader, isToday } from '../dateUtils'
+import { formatDayHeader, formatMinutes, isToday } from '../dateUtils'
 import { TaskItem } from './TaskItem'
 import { QuickAddForm } from './QuickAddForm'
 
@@ -10,9 +10,10 @@ interface Props {
   onAdd: (input: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void
   onToggle: (id: string) => void
   onDelete: (id: string) => void
+  onLogTime: (id: string, minutes: number) => void
 }
 
-export function DayColumn({ date, tasks, onAdd, onToggle, onDelete }: Props) {
+export function DayColumn({ date, tasks, onAdd, onToggle, onDelete, onLogTime }: Props) {
   const [adding, setAdding] = useState(false)
   const { weekday, dayNum, month } = formatDayHeader(date)
   const today = isToday(date)
@@ -24,7 +25,9 @@ export function DayColumn({ date, tasks, onAdd, onToggle, onDelete }: Props) {
     return a.time.localeCompare(b.time)
   })
 
-  const remaining = sorted.filter((t) => !t.completed).length
+  const pending = sorted.filter((t) => !t.completed)
+  const remaining = pending.length
+  const remainingMinutes = pending.reduce((sum, t) => sum + (t.estimatedMinutes ?? 0), 0)
 
   return (
     <div className="flex h-full min-w-0 flex-1 flex-col border-r border-slate-800 last:border-r-0">
@@ -46,14 +49,20 @@ export function DayColumn({ date, tasks, onAdd, onToggle, onDelete }: Props) {
         <span className="text-[10px] text-slate-500">{month}</span>
         {remaining > 0 && (
           <span className="mt-0.5 rounded-full bg-slate-700 px-1.5 py-0.5 text-[10px] text-slate-300">
-            {remaining} left
+            {remaining} left{remainingMinutes > 0 ? ` · ${formatMinutes(remainingMinutes)}` : ''}
           </span>
         )}
       </div>
 
       <div className="flex-1 space-y-1.5 overflow-y-auto px-2 py-2">
         {sorted.map((task) => (
-          <TaskItem key={task.id} task={task} onToggle={onToggle} onDelete={onDelete} />
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={onToggle}
+            onDelete={onDelete}
+            onLogTime={onLogTime}
+          />
         ))}
 
         {adding ? (

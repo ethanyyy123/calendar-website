@@ -9,9 +9,18 @@ interface Props {
   onAdd: (input: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void
   onToggle: (id: string) => void
   onDelete: (id: string) => void
+  onLogTime: (id: string, minutes: number) => void
 }
 
-export function WeekBoard({ days, direction, tasksByDay, onAdd, onToggle, onDelete }: Props) {
+export function WeekBoard({
+  days,
+  direction,
+  tasksByDay,
+  onAdd,
+  onToggle,
+  onDelete,
+  onLogTime,
+}: Props) {
   return (
     <div className="relative flex-1 overflow-hidden">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -32,6 +41,7 @@ export function WeekBoard({ days, direction, tasksByDay, onAdd, onToggle, onDele
               onAdd={onAdd}
               onToggle={onToggle}
               onDelete={onDelete}
+              onLogTime={onLogTime}
             />
           ))}
         </motion.div>

@@ -2,7 +2,15 @@ import { useMemo, useState } from 'react'
 import { useTasks } from './hooks/useTasks'
 import { Header } from './components/Header'
 import { WeekBoard } from './components/WeekBoard'
-import { defaultWeekStart, dayColumns, formatRangeLabel, shiftDate, toDateKey } from './dateUtils'
+import { TodaySummary } from './components/TodaySummary'
+import {
+  defaultWeekStart,
+  dayColumns,
+  formatRangeLabel,
+  shiftDate,
+  toDateKey,
+  todayKey,
+} from './dateUtils'
 import type { Task } from './types'
 
 function getNotifStatus(): NotificationPermission | 'unsupported' {
@@ -11,7 +19,7 @@ function getNotifStatus(): NotificationPermission | 'unsupported' {
 }
 
 export default function App() {
-  const { tasks, addTask, deleteTask, toggleComplete } = useTasks()
+  const { tasks, addTask, deleteTask, toggleComplete, logTime } = useTasks()
   const [windowSize, setWindowSize] = useState<5 | 7>(7)
   const [startKey, setStartKey] = useState(() => toDateKey(defaultWeekStart()))
   const [direction, setDirection] = useState<1 | -1>(1)
@@ -28,6 +36,8 @@ export default function App() {
     }
     return map
   }, [tasks])
+
+  const todaysTasks = useMemo(() => tasksByDay[todayKey()] ?? [], [tasksByDay])
 
   const nav = (deltaDays: number) => {
     setDirection(deltaDays > 0 ? 1 : -1)
@@ -60,6 +70,7 @@ export default function App() {
         onSetWindow={setWindowSize}
         onRequestNotifications={requestNotifications}
       />
+      <TodaySummary tasks={todaysTasks} />
       <WeekBoard
         days={days}
         direction={direction}
@@ -67,6 +78,7 @@ export default function App() {
         onAdd={addTask}
         onToggle={toggleComplete}
         onDelete={deleteTask}
+        onLogTime={logTime}
       />
     </div>
   )

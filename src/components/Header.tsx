@@ -26,7 +26,10 @@ export function Header({
   return (
     <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-4 py-3">
       <div className="flex items-center gap-3">
-        <h1 className="text-lg font-semibold text-slate-100">📋 TodoCal</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-lg font-semibold text-slate-100">📋 TodoCal</h1>
+          <span className="hidden text-[11px] text-slate-500 sm:inline">Plan less. Do more.</span>
+        </div>
         <span className="text-sm text-slate-400">{rangeLabel}</span>
       </div>
 
@@ -52,34 +55,35 @@ export function Header({
 
         <button
           onClick={onPrevWeek}
-          title="Jump back a week"
+          title="Previous week"
           className="rounded-md border border-slate-700 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
         >
           «
         </button>
         <button
           onClick={onPrevDay}
-          title="Slide back a day"
+          title="Previous day"
           className="rounded-md border border-slate-700 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
         >
           ‹
         </button>
         <button
           onClick={onToday}
+          title="Jump to today"
           className="rounded-md border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-800"
         >
           Today
         </button>
         <button
           onClick={onNextDay}
-          title="Slide forward a day"
+          title="Next day"
           className="rounded-md border border-slate-700 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
         >
           ›
         </button>
         <button
           onClick={onNextWeek}
-          title="Jump forward a week"
+          title="Next week"
           className="rounded-md border border-slate-700 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
         >
           »

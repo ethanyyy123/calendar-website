@@ -10,5 +10,7 @@ export interface Task {
   priority: Priority
   reminderMinutesBefore?: number // e.g. 10, 30, 60; undefined = no reminder
   reminderFiredFor?: string // ISO timestamp key of last fired reminder, to avoid re-firing
+  estimatedMinutes?: number // how long the user expects this to take
+  loggedMinutes?: number // how long they've actually logged against it so far
   createdAt: string
 }

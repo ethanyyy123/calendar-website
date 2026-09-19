@@ -20,6 +20,7 @@ export function QuickAddForm({ date, onAdd, onCancel }: Props) {
   const [time, setTime] = useState('')
   const [priority, setPriority] = useState<Priority>('medium')
   const [reminder, setReminder] = useState('')
+  const [estimate, setEstimate] = useState('')
 
   const submit = () => {
     if (!title.trim()) return
@@ -29,10 +30,12 @@ export function QuickAddForm({ date, onAdd, onCancel }: Props) {
       time: time || undefined,
       priority,
       reminderMinutesBefore: reminder ? Number(reminder) : undefined,
+      estimatedMinutes: estimate ? Number(estimate) : undefined,
     })
     setTitle('')
     setTime('')
     setReminder('')
+    setEstimate('')
     onCancel()
   }
 
@@ -55,6 +58,16 @@ export function QuickAddForm({ date, onAdd, onCancel }: Props) {
           value={time}
           onChange={(e) => setTime(e.target.value)}
           className="rounded-md border border-slate-600 bg-slate-900 px-1.5 py-1 text-xs text-slate-200"
+        />
+        <input
+          type="number"
+          min={0}
+          step={5}
+          value={estimate}
+          onChange={(e) => setEstimate(e.target.value)}
+          placeholder="Est. min"
+          title="How many minutes you expect this to take"
+          className="w-[76px] rounded-md border border-slate-600 bg-slate-900 px-1.5 py-1 text-xs text-slate-200 placeholder:text-slate-500"
         />
         <select
           value={priority}

@@ -1,20 +1,36 @@
+import { useState } from 'react'
 import type { Task } from '../types'
-import { formatTime12h, isPast } from '../dateUtils'
+import { formatMinutes, formatTime12h, isPast } from '../dateUtils'
 
-const PRIORITY_DOT: Record<Task['priority'], string> = {
-  high: 'bg-rose-500',
-  medium: 'bg-amber-500',
-  low: 'bg-sky-500',
+const PRIORITY_STYLE: Record<Task['priority'], { dot: string; text: string; label: string }> = {
+  high: { dot: 'bg-rose-500', text: 'text-rose-400', label: 'High' },
+  medium: { dot: 'bg-amber-500', text: 'text-amber-400', label: 'Med' },
+  low: { dot: 'bg-sky-500', text: 'text-sky-400', label: 'Low' },
 }
 
 interface Props {
   task: Task
   onToggle: (id: string) => void
   onDelete: (id: string) => void
+  onLogTime: (id: string, minutes: number) => void
 }
 
-export function TaskItem({ task, onToggle, onDelete }: Props) {
+export function TaskItem({ task, onToggle, onDelete, onLogTime }: Props) {
+  const [logging, setLogging] = useState(false)
+  const [minutesInput, setMinutesInput] = useState('')
   const overdue = !task.completed && isPast(task.date, task.time)
+  const priority = PRIORITY_STYLE[task.priority]
+
+  const hasEstimate = typeof task.estimatedMinutes === 'number'
+  const logged = task.loggedMinutes ?? 0
+  const overBudget = hasEstimate && logged > (task.estimatedMinutes as number)
+
+  const submitLog = () => {
+    const val = Number(minutesInput)
+    if (val > 0) onLogTime(task.id, val)
+    setMinutesInput('')
+    setLogging(false)
+  }
 
   return (
     <div
@@ -48,14 +64,65 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
         >
           {task.title}
         </p>
-        <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-400">
-          <span className={`h-1.5 w-1.5 rounded-full ${PRIORITY_DOT[task.priority]}`} />
+        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400">
           {task.time && <span>{formatTime12h(task.time)}</span>}
+          <span className={`flex items-center gap-1 ${priority.text}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${priority.dot}`} />
+            {priority.label}
+          </span>
+          {hasEstimate && (
+            <span
+              title="Estimated vs. logged time"
+              className={overBudget ? 'font-medium text-rose-400' : ''}
+            >
+              {logged > 0 ? `${formatMinutes(logged)} / ${formatMinutes(task.estimatedMinutes!)}` : formatMinutes(task.estimatedMinutes!)}
+            </span>
+          )}
           {task.reminderMinutesBefore && (
             <span title="Reminder set">🔔 {task.reminderMinutesBefore}m</span>
           )}
           {overdue && <span className="font-medium text-rose-400">overdue</span>}
         </div>
+
+        {logging ? (
+          <div className="mt-1.5 flex items-center gap-1">
+            <input
+              autoFocus
+              type="number"
+              min={1}
+              value={minutesInput}
+              onChange={(e) => setMinutesInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') submitLog()
+                if (e.key === 'Escape') setLogging(false)
+              }}
+              placeholder="min worked"
+              className="w-20 rounded-md border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[11px] text-slate-200"
+            />
+            <button
+              onClick={submitLog}
+              className="rounded-md bg-emerald-600 px-1.5 py-0.5 text-[11px] text-white hover:bg-emerald-500"
+            >
+              Add
+            </button>
+            <button
+              onClick={() => setLogging(false)}
+              className="rounded-md px-1.5 py-0.5 text-[11px] text-slate-400 hover:bg-slate-700"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          hasEstimate &&
+          !task.completed && (
+            <button
+              onClick={() => setLogging(true)}
+              className="mt-1 text-[11px] text-slate-500 opacity-0 transition-opacity hover:text-slate-300 group-hover:opacity-100"
+            >
+              + log time
+            </button>
+          )
+        )}
       </div>
 
       <button
