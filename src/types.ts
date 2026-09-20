@@ -14,3 +14,12 @@ export interface Task {
   loggedMinutes?: number // how long they've actually logged against it so far
   createdAt: string
 }
+
+export interface Event {
+  id: string
+  title: string
+  date: string // 'yyyy-MM-dd'
+  startTime: string // 'HH:mm'
+  endTime: string // 'HH:mm'
+  createdAt: string
+}

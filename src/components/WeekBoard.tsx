@@ -1,25 +1,31 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import type { Task } from '../types'
+import type { Event, Task } from '../types'
 import { DayColumn } from './DayColumn'
 
 interface Props {
   days: string[]
   direction: 1 | -1
   tasksByDay: Record<string, Task[]>
+  eventsByDay: Record<string, Event[]>
   onAdd: (input: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void
   onToggle: (id: string) => void
   onDelete: (id: string) => void
   onLogTime: (id: string, minutes: number) => void
+  onAddEvent: (input: Omit<Event, 'id' | 'createdAt'>) => void
+  onDeleteEvent: (id: string) => void
 }
 
 export function WeekBoard({
   days,
   direction,
   tasksByDay,
+  eventsByDay,
   onAdd,
   onToggle,
   onDelete,
   onLogTime,
+  onAddEvent,
+  onDeleteEvent,
 }: Props) {
   return (
     <div className="relative flex-1 overflow-hidden">
@@ -38,10 +44,13 @@ export function WeekBoard({
               key={date}
               date={date}
               tasks={tasksByDay[date] ?? []}
+              events={eventsByDay[date] ?? []}
               onAdd={onAdd}
               onToggle={onToggle}
               onDelete={onDelete}
               onLogTime={onLogTime}
+              onAddEvent={onAddEvent}
+              onDeleteEvent={onDeleteEvent}
             />
           ))}
         </motion.div>

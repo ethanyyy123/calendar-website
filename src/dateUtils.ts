@@ -80,3 +80,13 @@ export function formatTime12h(time?: string): string {
   const h12 = h % 12 === 0 ? 12 : h % 12
   return `${h12}:${String(m).padStart(2, '0')} ${period}`
 }
+
+export function minutesSinceMidnight(time: string): number {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+export function nowMinutesSinceMidnight(): number {
+  const now = new Date()
+  return now.getHours() * 60 + now.getMinutes()
+}
