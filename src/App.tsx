@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useTasks } from './hooks/useTasks'
-import { useEvents } from './hooks/useEvents'
 import { Header } from './components/Header'
 import { WeekBoard } from './components/WeekBoard'
 import { TodaySummary } from './components/TodaySummary'
@@ -12,7 +11,7 @@ import {
   toDateKey,
   todayKey,
 } from './dateUtils'
-import type { Event, Task } from './types'
+import type { Task } from './types'
 
 function getNotifStatus(): NotificationPermission | 'unsupported' {
   if (!('Notification' in window)) return 'unsupported'
@@ -21,7 +20,6 @@ function getNotifStatus(): NotificationPermission | 'unsupported' {
 
 export default function App() {
   const { tasks, addTask, deleteTask, toggleComplete, logTime } = useTasks()
-  const { events, addEvent, deleteEvent } = useEvents()
   const [windowSize, setWindowSize] = useState<5 | 7>(7)
   const [startKey, setStartKey] = useState(() => toDateKey(defaultWeekStart()))
   const [direction, setDirection] = useState<1 | -1>(1)
@@ -38,15 +36,6 @@ export default function App() {
     }
     return map
   }, [tasks])
-
-  const eventsByDay = useMemo(() => {
-    const map: Record<string, Event[]> = {}
-    for (const event of events) {
-      if (!map[event.date]) map[event.date] = []
-      map[event.date].push(event)
-    }
-    return map
-  }, [events])
 
   const todaysTasks = useMemo(() => tasksByDay[todayKey()] ?? [], [tasksByDay])
 
@@ -86,13 +75,10 @@ export default function App() {
         days={days}
         direction={direction}
         tasksByDay={tasksByDay}
-        eventsByDay={eventsByDay}
         onAdd={addTask}
         onToggle={toggleComplete}
         onDelete={deleteTask}
         onLogTime={logTime}
-        onAddEvent={addEvent}
-        onDeleteEvent={deleteEvent}
       />
     </div>
   )

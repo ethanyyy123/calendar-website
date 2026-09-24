@@ -13,12 +13,6 @@ check off, and get reminded about tasks — without the clutter of a full calend
   with a strikethrough instead of disappearing.
 - **Reminders** — enable browser notifications and get alerted a chosen number of minutes
   before a task is due. Overdue tasks are also highlighted in red.
-- **Workload tracking** — give a task an estimated time and log actual minutes worked
-  against it, so you can see estimate vs. reality.
-- **Day timeline** — click "+ Add event" to block out fixed-time commitments (class,
-  practice, a meeting) on an hour-by-hour timeline. Any task with both a time and an
-  estimate shows up on the same timeline next to your events, so you can see your whole
-  day planned out; a red line marks the current time.
 - **Local-only storage** — everything is saved in your browser's `localStorage`. No account,
   no server, no data leaving your machine.
 
